@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+ </head>
+
+<section class="section-content padding-y bg">
+<div class="container">
+
+<!-- ============================ COMPONENT 1 ================================= -->
+<h4 class="text-center mb-10">Review Your Order and Make Payment</h4>
+<div class="row">
+	<aside class="col-lg-8">
+<div class="card">
+  <h5 class="card-header">
+    Billing Address
+  </h5>
+  <div class="card-body">
+    <p class="card-text mb-0">{{order.full_name}}</p>
+    <p class="card-text mb-0">{{order.full_address}}</p>
+    <p class="card-text mb-0">{{order.city}} {{order.state}}</p>
+    <p class="card-text mb-0">{{order.country}}</p>
+    <p class="card-text mb-0">{{order.email}}</p>
+    <p class="card-text mb-0">{{order.phone}}</p>
+    {% if order.order_note %}
+    <b>Order Note:</b><p class="card-text" "mb-0">{{order.order_note}}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <h5 class="card-header">
+    Payment Method
+  </h5>
+  <div class="card-body">
+    <p class="card-text">PAYPAL</p>
+  </div>
+</div>
+
+<div class="card">
+  <h5 class="card-header">
+    Review Products
+  </h5>
+  <div class="card-body">
+    <table class="table table-borderless table-shopping-cart">
+<thead class="text-muted">
+<tr class="small text-uppercase">
+  <th scope="col">Product</th>
+  <th scope="col" width="120">Quantity</th>
+  <th scope="col" width="120">Price</th>
+</tr>
+</thead>
+<tbody>
+{% for cart_item in cart_items %}
+<tr>
+	<td>
+		<figure class="itemside align-items-center">
+			<div class="aside"><img src="{{ cart_item.product.images.url}}" class="img-sm"></div>
+			<figcaption class="info">
+				<a href="{{ cart_item.product.get_url}}" class="title text-dark">{{cart_item.product.product_name}}</a>
+				<p class="small text-muted">
+				{% if cart_item.variations.all %}
+				{% for item in cart_item.variations.all %}
+				{{ item.variation_category | capfirst}} : {{item.variation_value |capfirst}} <br>
+				{% endfor %}
+				{% endif %}
+				</p>
+			</figcaption>
+		</figure>
+	</td>
+	<td> 
+		<!-- col.// -->
+        <label for="">{{ cart_item.quantity }}</label>
+					
+	</td>
+	<td> 
+		<div class="price-wrap"> 
+			<var class="price">Rs {{cart_item.sub_total}}</var> 
+			<small class="text-muted"> Rs {{cart_item.product.price}} each</small> 
+		</div> <!-- price-wrap .// -->
+	</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+  </div>
+</div>
+
+	</aside> <!-- col.// -->
+	<aside class="col-lg-4">
+
+		<div class="card">
+		<div class="card-body">
+			<dl class="dlist-align">
+			  <dt>Total price:</dt>
+			  <dd class="text-right">Rs {{total}}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Tax:</dt>
+			  <dd class="text-right"> Rs {{tax}}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Grand Total:</dt>
+			  <dd class="text-right text-dark b"><strong>Rs {{grand_total}}</strong></dd>
+			</dl>
+			<hr>
+			{% comment %} <button type="button" id="jsCheckoutPayment" name="submit" class="btn btn-primary">Pay Now</button> {% endcomment %}
+
+			<a href="{% url 'payments' %}" class="btn btn-primary">Pay With Paytm</a>
+		</form>
+		</div> <!-- card-body.// -->
+		</div> <!-- card.// -->
+
+</aside> <!-- col.// -->
+
+
+</div> <!-- row.// -->
+<!-- ============================ COMPONENT 1 END .// ================================= -->
+
+</div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+</body>
+</html>
+
+<script>
+document.getElementById("jsCheckoutPayment").addEventListener("click", function(){openJsCheckoutPopup('{{order_id}}','{{token}}','{{grand_total}}');});
+function openJsCheckoutPopup(orderId, txnToken, amount)
+{
+var config = {
+	"root": "",
+	"flow": "DEFAULT",
+	"data": {
+		"orderId": orderId, 
+		"token": txnToken, 
+		"tokenType": "TXN_TOKEN",
+		"amount": amount 
+		},
+		"merchant":{
+		"redirect": false
+	},
+	"handler": {
+		transactionStatus:function(data){
+			console.log("payment status ", data);  
+		  }, 
+	"notifyMerchant": function(eventName,data){
+		console.log("notifyMerchant handler function called");
+		console.log("eventName => ",eventName);
+		console.log("data => ",data);
+		}
+	}
+};
+	if(window.Paytm && window.Paytm.CheckoutJS){
+		// initialze configuration using init method 
+		window.Paytm.CheckoutJS.init(config).then(function onSuccess() {
+			// after successfully updating configuration, invoke checkoutjs
+			window.Paytm.CheckoutJS.invoke();
+		}).catch(function onError(error){
+			console.log("error => ",error);
+		});
+}
+}
+  
+</script>
+
+{% endblock %}
