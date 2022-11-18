@@ -2,12 +2,13 @@ import requests
 import json
 import paytmchecksum
 import datetime
+from decouple import config
 
 
-PAYTM_MID = ""
-PAYTM_MERCHANT_KEY = ""
-PAYTM_ENVIRONMENT= 'https://securegw-stage.paytm.in'
-PAYTM_WEBSITE= 'WEBSTAGING'
+PAYTM_MID = config('PAYTM_MID')
+PAYTM_MERCHANT_KEY = config('PAYTM_MERCHANT_KEY')
+PAYTM_ENVIRONMENT= config('PAYTM_ENVIRONMENT')
+PAYTM_WEBSITE= config('PAYTM_WEBSITE')
 
 # amount= '1.00'
 # order_id='order_'+str(datetime.datetime.now().timestamp())

@@ -8,6 +8,10 @@ urlpatterns = [
     path('',views.dashboard,name="dashboard"),
     path('forgotpassword/',views.forgotpassword,name="forgotpassword"),
     path('resetpassword/',views.resetpassword,name="resetpassword"),
+    path('my_orders/',views.my_orders,name="my-orders"),
+    path('edit_profile/',views.edit_profile,name="edit-profile"),
+    path('change_password/',views.change_password,name="change-password"),
+     path('order_detail/<int:order_id>',views.order_detail,name="order-detail"),
     #email functions
     path('activate/<uidb64>/<token>',views.activate,name="activate"), 
     path('resetpassword_validate/<uidb64>/<token>',views.resetpassword_validate,name="resetpassword_validate"), 

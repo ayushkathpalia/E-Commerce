@@ -68,8 +68,8 @@ def place_order(request,total = 0,quantity=0):
             request.session.save()
             print(f'OrderNO_SESSION:{order_number}')
             #paytm getToken
-            token = paytm_api.getTransactionToken(grand_total,order_number)
-            print(f'TOKEN:{token}')
+            #token = paytm_api.getTransactionToken(grand_total,order_number)
+            #print(f'TOKEN:{token}')
             context = {
                 'order' : order,
                 'cart_items':cart_items,
@@ -77,7 +77,7 @@ def place_order(request,total = 0,quantity=0):
                 'grand_total':grand_total,
                 'tax':tax,
                 'order_id':order_number,
-                'token':token
+                'token':'123456790'
             }
             return render(request,'orders/payments.html',context)
         else:
